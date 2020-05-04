@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fenix-config
+  namespace: fenix
+data:
+  port: "5555"
+  fenix.json: |
+    {
+      "variable1": "green",
+      "variable2": "red"
+    }

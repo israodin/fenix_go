@@ -1,0 +1,9 @@
+FROM golang:alpine as builder
+WORKDIR /app
+COPY . .
+
+RUN go mod download
+RUN CGO_ENABLED=0 GDOS=linux go build -a -installsuffix cgo -o fenix .
+FROM scratch
+COPY --from=builder /app/fenix /fenix
+ENTRYPOINT ["/fenix"]

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+apiVersion: v1
+metadata:
+  name:  fenix
+  namespace: fenix
+spec:
+  ports:
+  - port: 6767
+  selector:
+    app: fenix

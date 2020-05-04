@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fenix-deployment
+  namespace: fenix
+  labels:
+    app: fenix
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fenix
+  template:
+    metadata:
+      labels:
+        app: fenix
+    spec:
+      containers:
+        - name: fenix
+          image: israodin/fenix:v0.1.0-alpine
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 6767
+          resources:
+              limits:
+                cpu: 500m
+                memory: 128Mi
+              requests:
+                cpu: 300m
+                memory: 64Mi
+          livenessProbe:
+              httpGet:
+                path: /liveness
+                port: http
+              failureThreshold: 1
+              periodSeconds: 10
+          readinessProbe:
+              httpGet:
+                path: /readines
+                port: http
+              failureThreshold: 1
+              periodSeconds: 10
+          startupProbe:
+              httpGet:
+                path: /liveness
+                port: http
+              failureThreshold: 30
+              periodSeconds: 10
+          env:
+            - name: FENIX_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: fenix-config
+                  key: port
+          volumeMounts:
+            - name: db-secrets
+              mountPath: /opt/fenix/conf/creds
+              readOnly: true
+      volumes:
+        - name: db-secrets
+          secret:
+            secretName: db-creds
+
